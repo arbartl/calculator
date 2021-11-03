@@ -19,6 +19,7 @@
     width: auto;
     height: 200px;
     display: flex;
+    flex-flow: column nowrap;
     padding: 10px;
     border: 5px black solid;
     margin-bottom: 50px;
@@ -32,6 +33,14 @@
     width: auto;
     text-align: right;
     font-size: 80px;
+    margin: 0px 10px;
+}
+
+#display-history{
+    align-self: flex-end;
+    width: auto;
+    text-align: right;
+    font-size: 40px;
     margin: 0px 10px;
 }
 
@@ -51,6 +60,7 @@
     height: auto;
     border: 2px black solid;
     margin: 10px 10px;
+    padding-top: 10px;
     font-size: 65px;
     display: flex;
     align-content: center;
@@ -58,4 +68,9 @@
     box-shadow: 0 0 5px grey;
     background-color: darkgrey;
     border-radius: 5px;
+}
+
+#btn-clr {
+    background-color: maroon;
+    color: white;
 }
