@@ -20,8 +20,20 @@ function multiply(num1, num2) {
 }
 
 function divide(num1, num2) {
-    total = num1 / num2;
-    return total;
+    if (num2 == 0) {
+        alert("Can't divide by Zero");
+        num1 = null;
+        num2 = null;
+        subTotal = null;
+        displayVariable = '';
+        displayHistory = '';
+        operatorLastPressed = null;
+        updateDisplay();
+        return null;
+    } else {
+        total = num1 / num2;
+        return total;
+    }
 }
 
 function exponent(num1, num2) {
@@ -35,15 +47,15 @@ function negate(num1) {
 
 function operate(num1, operator, num2) {
     if (operator == '+') {
-        return add(num1, num2);
+        return Math.round(add(num1, num2) * 100) / 100;
     } else if (operator == '-') {
-        return subtract(num1, num2);
+        return Math.round(subtract(num1, num2) * 100) / 100;
     } else if (operator == '*') {
-        return multiply(num1, num2);
+        return Math.round(multiply(num1, num2) * 100) / 100;
     } else if (operator == '/') {
-        return divide(num1, num2);
+        return Math.round(divide(num1, num2) * 100) / 100;
     } else if (operator == '^') {
-        return exponent(num1, num2);
+        return Math.round(exponent(num1, num2) * 100) / 100;
     }
 }
 
@@ -98,6 +110,9 @@ const numberButtons = numberPad.querySelectorAll('.number-button');
 
 numberButtons.forEach((button) => {
     button.addEventListener('click', function(e) {
+        if (displayBuffer == null) {
+            clearAll();
+        }
         displayBuffer.push(e.target.textContent);
         displayVariable = displayBuffer.join('');
         updateDisplay();
@@ -132,23 +147,67 @@ operatorButtons.forEach((button) => {
 
 function processClick(operator) {
     if (num1 == null && displayBuffer) {
-        num1 = parseFloat(displayBuffer.join(''));
-        displayVariable = displayBuffer.join('') + operator;
-        displayHistory = displayVariable;
+        num1 = parseFloat(displayVariable);
         displayBuffer = [];
-    } else if (num1 && !num2 && displayBuffer) {
-        displayHistory += displayVariable + operator;
-        num2 = parseFloat(displayBuffer.join(''));
-        subTotal = operate(num1, operatorLastPressed, num2);
-        displayVariable = subTotal + operator;
+        displayHistory = displayVariable += operator;
+    } else if (num2 == null && displayBuffer) {
+        displayHistory = num1 + operator + displayBuffer.join('');
+        num1 = operate(num1, operatorLastPressed, parseFloat(displayVariable));
+        displayVariable = num1 + operator;
         displayBuffer = [];
-    } else if (num1 && num2) {
-        displayHistory += displayVariable + operator;
-        num1 = subTotal;
-        num2 = parseFloat(displayBuffer.join(''));
-        subTotal = operate(num1, operatorLastPressed, num2);
-        displayVariable = subTotal + operator;
-        displayBuffer = [];
+    } else if (num2 == null && !displayBuffer) {
+        displayHistory = num1 + operator;
+        displayVariable = num1 + operator;
+        displayBuffer = [];        
     }
     updateDisplay();
 }
+
+// Add functionality to Clear and Clear Entry buttons
+
+const clearButton = document.querySelector('#btn-clr');
+
+clearButton.addEventListener('click', function(e) {
+    clearAll();
+});
+
+function clearAll() {
+    num1 = null;
+    num2 = null;
+    subTotal = null;
+    displayVariable = '';
+    displayHistory = '';
+    displayBuffer = [];
+    operatorLastPressed = null;
+    updateDisplay();
+}
+
+const clearEntryButton = document.querySelector('#btn-ce');
+
+clearEntryButton.addEventListener('click', function(e) {
+    clearDisplay();
+});
+
+// Add functionality to Negate button
+
+const negateButton = document.querySelector('#btn-neg');
+
+negateButton.addEventListener('click', function(e) {
+    let negative = (parseFloat(displayBuffer.join('')) * -1);
+    displayBuffer = [];
+    displayBuffer.push(negative);
+    displayVariable = displayBuffer.join('');
+    updateDisplay();
+});
+
+// Add functionality to Evaluate button
+
+const evalButton = document.querySelector('#btn-eva');
+
+evalButton.addEventListener('click', function() {
+    displayHistory = num1 + operatorLastPressed + displayBuffer.join('');
+    num1 = operate(num1, operatorLastPressed, parseFloat(displayVariable));
+    displayBuffer = null;
+    displayVariable = num1;
+    updateDisplay();
+});
