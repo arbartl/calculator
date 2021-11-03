@@ -11,6 +11,8 @@
     border: 5px black solid;
     margin: auto;
     padding: 50px;
+    background-color: rgba(0, 0, 0, 0.637);
+    border-radius: 15px;
 }
 
 #display {
@@ -21,13 +23,15 @@
     border: 5px black solid;
     margin-bottom: 50px;
     justify-content: flex-end;
+    background-color: rgb(154, 199, 108);
+    border-radius: 15px;
 }
 
 #display-text {
     align-self: flex-end;
     width: auto;
     text-align: right;
-    font-size: 50px;
+    font-size: 80px;
     margin: 0px 10px;
 }
 
@@ -39,6 +43,7 @@
     display: flex;
     flex-flow: row wrap;
     justify-content: space-evenly;
+    background-color: cornsilk;
 }
 
 .button {
@@ -46,8 +51,11 @@
     height: auto;
     border: 2px black solid;
     margin: 10px 10px;
-    font-size: 48px;
+    font-size: 65px;
     display: flex;
     align-content: center;
     justify-content: center;
+    box-shadow: 0 0 5px grey;
+    background-color: darkgrey;
+    border-radius: 5px;
 }
