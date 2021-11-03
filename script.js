@@ -1,3 +1,9 @@
+let operator = '';
+let num1 = null;
+let num2 = null;
+let subTotal = 0;
+
+//Operator Functions
 function add(num1, num2) {
     total = num1 + num2;
     return total;
@@ -23,6 +29,10 @@ function exponent(num1, num2) {
     return total;
 }
 
+function negate(num1) {
+    return num1 * (-1);
+}
+
 function operate(num1, operator, num2) {
     if (operator == '+') {
         return add(num1, num2);
@@ -37,65 +47,108 @@ function operate(num1, operator, num2) {
     }
 }
 
+// MouseOver background color change functions
+const buttons = document.querySelectorAll(".button");
+
+buttons.forEach((button) => {
+    button.addEventListener('mouseover', function(e) {
+        if (e.target.getAttribute('id') === 'btn-clr' ||
+            e.target.getAttribute('id') === 'btn-ce') {
+            e.target.style.backgroundColor = '#520000';
+        } else {
+            e.target.style.backgroundColor = 'grey';
+        }
+    });
+});
+
+buttons.forEach((button) => {
+    button.addEventListener('mouseout', function(e) {
+        if (e.target.getAttribute('id') === 'btn-clr' ||
+            e.target.getAttribute('id') === 'btn-ce') {
+            e.target.style.backgroundColor = 'maroon';
+        } else {
+            e.target.style.backgroundColor = 'darkgrey';
+        }
+    });
+});
+
+// Update screen display
 let displayVariable = '';
 let displayHistory = '';
-
-let operator = '';
-let num1 = 0;
-let num2 = 0;
-let subTotal = 0;
+let displayBuffer = [];
 
 const displayText = document.querySelector("#display-text");
 const displayHistoryText = document.querySelector('#display-history');
 
-const buttons = document.querySelectorAll(".button");
+function updateDisplay() {
+    displayText.textContent = displayVariable;
+    displayHistoryText.textContent = displayHistory;
+}
 
-buttons.forEach((button) => {
+function clearDisplay() {
+    displayBuffer = [];
+    displayVariable = '';
+    updateDisplay();
+}
+
+// Add listener to number buttons
+
+const numberPad = document.querySelector('#buttons');
+const numberButtons = numberPad.querySelectorAll('.number-button');
+
+numberButtons.forEach((button) => {
     button.addEventListener('click', function(e) {
-        let buttonId = e.target.getAttribute('id');
-        if (buttonId === 'btn-clr') {
-            displayText.textContent = 0;
-            displayHistoryText.textContent = 0;
-            num1 = 0;
-            num2 = 0;
-        } else if (buttonId === 'btn-add') {
-            num1 = parseFloat(displayVariable);
-            operator = '+';
-            clearDisplay();
-        } else if (buttonId === 'btn-sub') {
-            num1 = parseFloat(displayVariable);
-            operator = '-';
-            clearDisplay();
-        } else if (buttonId === 'btn-mul') {
-            num1 = parseFloat(displayVariable);
-            operator = '*';
-            clearDisplay();
-        } else if (buttonId === 'btn-div') {
-            num1 = parseFloat(displayVariable);
-            operator = '/';
-            clearDisplay();
-        } else if (buttonId === 'btn-exp') {
-            num1 = parseFloat(displayVariable);
-            operator = '^';
-            clearDisplay();
-        } else if (buttonId === 'btn-eva') {
-            num2 = parseFloat(displayVariable);
-            subTotal = operate(num1, operator, num2).toFixed(3);
-            displayVariable = subTotal;
-            num1 = subTotal;
-            num2 = 0;
-        } else {
-            displayVariable += e.target.textContent;            
-        }
+        displayBuffer.push(e.target.textContent);
+        displayVariable = displayBuffer.join('');
         updateDisplay();
     });
 });
 
-function updateDisplay() {
-    displayText.textContent = displayVariable;
-}
+// Add listener to operator buttons
+let operatorLastPressed = null;
 
-function clearDisplay() {
-    displayVariable = '';
+const operatorButtons = numberPad.querySelectorAll('.operator-button');
+
+operatorButtons.forEach((button) => {
+    button.addEventListener('click', function(e) {
+        if (e.target.getAttribute('id') === 'btn-add') {
+            processClick('+');
+            operatorLastPressed = '+';            
+        } else if (e.target.getAttribute('id') === 'btn-sub') {
+            processClick('-');
+            operatorLastPressed = '-';  
+        } else if (e.target.getAttribute('id') === 'btn-mul') {
+            processClick('*');
+            operatorLastPressed = '*';
+        } else if (e.target.getAttribute('id') === 'btn-div') {
+            processClick('/');
+            operatorLastPressed = '/';
+        } else if (e.target.getAttribute('id') === 'btn-exp') {
+            processClick('^');
+            operatorLastPressed = '^';
+        }
+    });
+});
+
+function processClick(operator) {
+    if (num1 == null && displayBuffer) {
+        num1 = parseFloat(displayBuffer.join(''));
+        displayVariable = displayBuffer.join('') + operator;
+        displayHistory = displayVariable;
+        displayBuffer = [];
+    } else if (num1 && !num2 && displayBuffer) {
+        displayHistory += displayVariable + operator;
+        num2 = parseFloat(displayBuffer.join(''));
+        subTotal = operate(num1, operatorLastPressed, num2);
+        displayVariable = subTotal + operator;
+        displayBuffer = [];
+    } else if (num1 && num2) {
+        displayHistory += displayVariable + operator;
+        num1 = subTotal;
+        num2 = parseFloat(displayBuffer.join(''));
+        subTotal = operate(num1, operatorLastPressed, num2);
+        displayVariable = subTotal + operator;
+        displayBuffer = [];
+    }
     updateDisplay();
 }
