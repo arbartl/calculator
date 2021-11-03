@@ -126,6 +126,7 @@ const operatorButtons = numberPad.querySelectorAll('.operator-button');
 
 operatorButtons.forEach((button) => {
     button.addEventListener('click', function(e) {
+        decButton.disabled = false;
         if (e.target.getAttribute('id') === 'btn-add') {
             processClick('+');
             operatorLastPressed = '+';            
@@ -169,6 +170,7 @@ const clearButton = document.querySelector('#btn-clr');
 
 clearButton.addEventListener('click', function(e) {
     clearAll();
+    decButton.disabled = false;
 });
 
 function clearAll() {
@@ -186,6 +188,7 @@ const clearEntryButton = document.querySelector('#btn-ce');
 
 clearEntryButton.addEventListener('click', function(e) {
     clearDisplay();
+    decButton.disabled = false;
 });
 
 // Add functionality to Negate button
@@ -209,5 +212,14 @@ evalButton.addEventListener('click', function() {
     num1 = operate(num1, operatorLastPressed, parseFloat(displayVariable));
     displayBuffer = null;
     displayVariable = num1;
+    decButton.disabled = false;
     updateDisplay();
+});
+
+// Disable buttons that cause errors when entered incorrectly
+
+const decButton = document.querySelector('#btn-dec');
+
+decButton.addEventListener('click', function() {
+    decButton.disabled = true;
 });
